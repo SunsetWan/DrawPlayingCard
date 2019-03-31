@@ -10,6 +10,8 @@ import UIKit
 
 class PlayingCardView: UIView {
     
+    // When you call setNeedsDisplay(), system will eventually call override func draw(_ rect: CGRect)
+    // When you call setNeedsLayout(), system will eventually call override func layoutSubviews()
     var rank: Int = 5 { didSet { setNeedsDisplay(); setNeedsLayout() } }
     var suit: String = "♥️" { didSet { setNeedsDisplay(); setNeedsLayout() } }
     var isFaceUp: Bool = true { didSet { setNeedsDisplay(); setNeedsLayout() } }
@@ -33,8 +35,27 @@ class PlayingCardView: UIView {
     
     private func createCornerLabel() -> UILabel {
         let label = UILabel()
-        
+        label.numberOfLines = 0 // zero means you can use as many lines as you need, Mr. label
+        addSubview(label)
         return label
+    }
+    
+    
+    private func configureCornerLabel(_ label: UILabel) {
+        label.attributedText = cornerString
+        label.frame.size = CGSize.zero
+        label.sizeToFit()
+        label.isHidden = !isFaceUp
+    }
+
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        configureCornerLabel(upperLeftCornerLabel)
+        
+
+        // frame is about position, whereas bounds are where we draw
+        upperLeftCornerLabel.frame.origin = bounds.origin.offsetBy(dx: cornerOffset, dy: cornerOffset)
         
     }
     
